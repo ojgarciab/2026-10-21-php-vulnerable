@@ -1,6 +1,8 @@
 // Pruebas mínimas del analizador: node test/analyzer.test.js
 const assert = require('node:assert/strict');
 const A = require('../docs/js/analyzer.js');
+A.registerLocale('es', require('../docs/js/locale-es.js'));
+A.registerLocale('en', require('../docs/js/locale-en.js'));
 
 // Valores INI
 assert.equal(A.iniBool('Off'), false);
@@ -73,3 +75,16 @@ const ci = o4.indexOf(';session.upload_progress.enabled = On');
 const di = o4.indexOf('session.upload_progress.enabled = Off');
 assert.ok(ci >= 0 && di > ci && di < o4.indexOf('[opcache]'), 'debe insertarse bajo la línea comentada');
 console.log('OK: inserción bajo directiva comentada');
+
+// Inglés: mismos resultados, textos traducidos
+const en = A.annotate(ini, { version: '8.3', locale: 'en', date: '2026-10-21' });
+assert.ok(en.output.includes('SUGGESTED CHANGE [CRITICAL]'));
+assert.ok(!en.output.includes('CAMBIO SUGERIDO'));
+assert.equal(en.result.findings.find((f) => f.key === 'memory_limit').detail, 'Current limit: 256M (256M).');
+// Todas las claves de texto existen en ambos idiomas
+for (const code of ['es', 'en']) {
+  const L = A.getLocale(code);
+  for (const r of A.RULES) assert.ok(L.rules[r.key] && L.rules[r.key].why && L.rules[r.key].caveat && L.rules[r.key].details, code + ': ' + r.key);
+  for (const id of Object.keys(A.CVES)) assert.ok(L.cves[id] && L.cves[id].title, code + ': ' + id);
+}
+console.log('OK: locales es/en');

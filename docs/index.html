@@ -4,105 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analizador php.ini · PHP2Shell</title>
-  <meta name="description" content="Analiza un php.ini en tu navegador y descarga una versión anotada con las mitigaciones de CVE-2026-109618 y CVE-2026-109619 (PHP2Shell) mientras actualizas PHP.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%234f46e5%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22%3Eini%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="alternate" hreflang="es" href="es/">
+  <link rel="alternate" hreflang="en" href="en/">
+  <link rel="alternate" hreflang="x-default" href="es/">
+  <script>
+    (function () {
+      var supported = ['es', 'en'];
+      var lang = null;
+      try { lang = localStorage.getItem('php2shell-lang'); } catch (e) { /* sin almacenamiento */ }
+      if (supported.indexOf(lang) < 0) {
+        var nav = (navigator.languages && navigator.languages[0]) || navigator.language || 'es';
+        lang = nav.slice(0, 2).toLowerCase();
+        if (supported.indexOf(lang) < 0) lang = 'es';
+      }
+      location.replace(lang + '/');
+    })();
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=es/"></noscript>
 </head>
 <body>
-  <header class="hero">
-    <div class="wrap">
-      <p class="eyebrow">INCIBE-CERT · aviso 21/10/2026 · importancia crítica</p>
-      <h1>Analizador de <code>php.ini</code> frente a PHP2Shell</h1>
-      <p class="lead">
-        Sube tu <code>php.ini</code> y obtén una copia anotada con los cambios sugeridos para mitigar
-        <strong>CVE-2026-109618</strong> y <strong>CVE-2026-109619</strong> mientras actualizas PHP.
-        Todo se procesa en tu navegador: el fichero nunca sale de tu equipo.
-      </p>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="card" id="input-card">
-      <h2>1. Carga el fichero</h2>
-      <div class="grid-2">
-        <div>
-          <label class="dropzone" id="dropzone" for="file-input" tabindex="0">
-            <input type="file" id="file-input" accept=".ini,text/plain,*/*" hidden>
-            <span class="drop-icon" aria-hidden="true">⇪</span>
-            <span><strong>Arrastra aquí tu php.ini</strong> o pulsa para seleccionarlo</span>
-            <span class="muted" id="file-name">Ningún fichero seleccionado</span>
-          </label>
-          <div class="row">
-            <button type="button" class="btn secondary" id="btn-sample">Cargar ejemplo (php.ini-production)</button>
-            <button type="button" class="btn secondary" id="btn-clear">Limpiar</button>
-          </div>
-        </div>
-        <div>
-          <label for="version">Versión de PHP en el servidor</label>
-          <select id="version">
-            <option value="unknown">No lo sé / no indicar</option>
-            <option value="8.5">8.5 (corregida en 8.5.12)</option>
-            <option value="8.4">8.4 (corregida en 8.4.27)</option>
-            <option value="8.3">8.3 (corregida en 8.3.36)</option>
-            <option value="8.2">8.2 (corregida en 8.2.35)</option>
-            <option value="8.1">8.1 (sin soporte: solo parches de distribución)</option>
-            <option value="8.0">8.0 (sin soporte: solo parches de distribución)</option>
-            <option value="7.4">7.4 (sin soporte: solo parches de distribución)</option>
-            <option value="old">7.3 o anterior (sin parche)</option>
-          </select>
-          <p class="help">Puedes obtenerla con <code>php -v</code>. Sirve para adaptar las recomendaciones (p. ej. <code>fatal_error_backtraces</code> solo existe en 8.5).</p>
-          <label for="ini-text">O pega el contenido directamente</label>
-          <textarea id="ini-text" rows="10" spellcheck="false" placeholder="; contenido de php.ini"></textarea>
-          <div class="row">
-            <button type="button" class="btn primary" id="btn-analyze">Analizar</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card hidden" id="result-card">
-      <h2>2. Resultado del análisis</h2>
-      <div id="version-banner" class="banner"></div>
-      <div class="summary" id="summary"></div>
-      <table class="findings" id="findings">
-        <thead>
-          <tr>
-            <th>Estado</th>
-            <th>Directiva</th>
-            <th>Línea</th>
-            <th>Valor actual</th>
-            <th>Sugerido</th>
-            <th>CVE</th>
-            <th>Severidad</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div class="row">
-        <button type="button" class="btn primary" id="btn-download">Descargar php.ini anotado</button>
-        <button type="button" class="btn secondary" id="btn-copy">Copiar al portapapeles</button>
-        <button type="button" class="btn secondary" id="btn-toggle-preview">Ver / ocultar vista previa</button>
-      </div>
-      <pre class="preview hidden" id="preview"></pre>
-    </section>
-
-    <section class="card" id="about-card">
-      <h2>¿Qué comprueba esta herramienta?</h2>
-      <div id="rules-doc"></div>
-      <p class="muted">
-        Fuentes: aviso de INCIBE-CERT, avisos de seguridad de PHP (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp),
-        PHP Foundation, Red Hat, Cloudflare, Wiz, watchTowr, Sansec, Qualys. Consulta el <a href="https://github.com/ojgarciab/2026-10-21-php-vulnerable#readme">README</a> del proyecto.
-      </p>
-    </section>
-  </main>
-
-  <footer class="wrap muted">
-    Herramienta de apoyo, sin garantías. Las mitigaciones de <code>php.ini</code> son parciales:
-    la única corrección completa es actualizar PHP y reiniciar todos los procesos.
-  </footer>
-
-  <script src="js/analyzer.js"></script>
-  <script src="js/sample.js"></script>
-  <script src="js/app.js"></script>
+  <p>Selecciona idioma / Choose a language: <a href="es/">Español</a> · <a href="en/">English</a></p>
 </body>
 </html>

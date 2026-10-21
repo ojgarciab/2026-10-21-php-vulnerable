@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>php.ini Analyzer · PHP2Shell</title>
+  <meta name="description" content="Analyze a php.ini in your browser and download an annotated version with the mitigations for CVE-2026-109618 and CVE-2026-109619 (PHP2Shell) while you upgrade PHP.">
+  <link rel="alternate" hreflang="es" href="../es/">
+  <link rel="alternate" hreflang="en" href="../en/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%234f46e5%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22%3Eini%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <nav class="lang" aria-label="Language">
+        <a href="../es/" hreflang="es" lang="es">Español</a> · <span aria-current="page">English</span>
+      </nav>
+      <p class="eyebrow">INCIBE-CERT · advisory 2026-10-21 · critical severity</p>
+      <h1><code>php.ini</code> analyzer against PHP2Shell</h1>
+      <p class="lead">
+        Upload your <code>php.ini</code> and get an annotated copy with the suggested changes to mitigate
+        <strong>CVE-2026-109618</strong> and <strong>CVE-2026-109619</strong> while you upgrade PHP.
+        Everything runs in your browser: the file never leaves your computer.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="input-card">
+      <h2>1. Load the file</h2>
+      <div class="grid-2">
+        <div>
+          <label class="dropzone" id="dropzone" for="file-input" tabindex="0">
+            <input type="file" id="file-input" accept=".ini,text/plain,*/*" hidden>
+            <span class="drop-icon" aria-hidden="true">⇪</span>
+            <span><strong>Drop your php.ini here</strong> or click to choose it</span>
+            <span class="muted" id="file-name">No file selected</span>
+          </label>
+          <div class="row">
+            <button type="button" class="btn secondary" id="btn-sample">Load sample (php.ini-production)</button>
+            <button type="button" class="btn secondary" id="btn-clear">Clear</button>
+          </div>
+        </div>
+        <div>
+          <label for="version">PHP version on the server</label>
+          <select id="version">
+            <option value="unknown">Unknown / don't specify</option>
+            <option value="8.5">8.5 (fixed in 8.5.12)</option>
+            <option value="8.4">8.4 (fixed in 8.4.27)</option>
+            <option value="8.3">8.3 (fixed in 8.3.36)</option>
+            <option value="8.2">8.2 (fixed in 8.2.35)</option>
+            <option value="8.1">8.1 (end-of-life: distribution patches only)</option>
+            <option value="8.0">8.0 (end-of-life: distribution patches only)</option>
+            <option value="7.4">7.4 (end-of-life: distribution patches only)</option>
+            <option value="old">7.3 or earlier (no patch)</option>
+          </select>
+          <p class="help">You can get it with <code>php -v</code>. It tailors the recommendations (e.g. <code>fatal_error_backtraces</code> only exists in 8.5).</p>
+          <label for="ini-text">Or paste the contents directly</label>
+          <textarea id="ini-text" rows="10" spellcheck="false" placeholder="; php.ini contents"></textarea>
+          <div class="row">
+            <button type="button" class="btn primary" id="btn-analyze">Analyze</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hidden" id="result-card">
+      <h2>2. Analysis results</h2>
+      <div id="version-banner" class="banner"></div>
+      <div class="summary" id="summary"></div>
+      <table class="findings" id="findings">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Directive</th>
+            <th>Line</th>
+            <th>Current value</th>
+            <th>Suggested</th>
+            <th>CVE</th>
+            <th>Severity</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row">
+        <button type="button" class="btn primary" id="btn-download">Download annotated php.ini</button>
+        <button type="button" class="btn secondary" id="btn-copy">Copy to clipboard</button>
+        <button type="button" class="btn secondary" id="btn-toggle-preview">Show / hide preview</button>
+      </div>
+      <pre class="preview hidden" id="preview"></pre>
+    </section>
+
+    <section class="card" id="about-card">
+      <h2>What does this tool check?</h2>
+      <div id="rules-doc"></div>
+      <p class="muted">
+        Sources: INCIBE-CERT advisory, PHP security advisories (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp),
+        PHP Foundation, Red Hat, Cloudflare, Wiz, watchTowr, Sansec, Qualys. See the project <a href="https://github.com/ojgarciab/2026-10-21-php-vulnerable#readme">README</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer class="wrap muted">
+    Support tool, provided without warranty. <code>php.ini</code> mitigations are partial:
+    the only complete fix is to upgrade PHP and restart every process.
+  </footer>
+
+  <script src="../js/analyzer.js"></script>
+  <script src="../js/locale-en.js"></script>
+  <script src="../js/sample.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

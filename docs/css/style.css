@@ -86,3 +86,6 @@ details.rule { border: 1px solid var(--border); border-radius: 8px; padding: 8px
 details.rule summary { cursor: pointer; font-weight: 600; }
 details.rule p { margin: 6px 0; font-size: .92rem; }
 footer { padding: 24px 16px 40px; text-align: center; }
+nav.lang { font-size: .9rem; opacity: .9; margin-bottom: 12px; }
+nav.lang a { color: #fff; text-decoration: underline; }
+nav.lang span[aria-current] { font-weight: 700; }

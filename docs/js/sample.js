@@ -1,9 +1,9 @@
-/* Extracto representativo de php.ini-production (PHP 8.x) para probar la herramienta. */
+/* Extracto representativo de php.ini-production (PHP 8.x) para probar la herramienta / sample for testing. */
 window.PHP_INI_SAMPLE = `[PHP]
 ;;;;;;;;;;;;;;;;;;;
 ; About php.ini   ;
 ;;;;;;;;;;;;;;;;;;;
-; Extracto de php.ini-production para pruebas del analizador PHP2Shell.
+; php.ini-production excerpt for testing the PHP2Shell analyzer.
 
 engine = On
 short_open_tag = Off
