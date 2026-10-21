@@ -119,7 +119,7 @@ test/analyzer.test.js    Pruebas con el módulo `node:assert`
 node test/analyzer.test.js   # o: npm test
 ```
 
-Para añadir o ajustar una comprobación basta con editar la lista `RULES` de `js/analyzer.js`:
+Para añadir o ajustar una comprobación basta con editar la lista `RULES` de `docs/js/analyzer.js`:
 cada regla declara la directiva, el valor sugerido, la severidad, el CVE, la explicación y una
 función `check()` que devuelve `ok`, `change`, `add`, `info` o `skip`.
 
