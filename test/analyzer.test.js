@@ -1,6 +1,6 @@
 // Pruebas mínimas del analizador: node test/analyzer.test.js
 const assert = require('node:assert/strict');
-const A = require('../js/analyzer.js');
+const A = require('../docs/js/analyzer.js');
 
 // Valores INI
 assert.equal(A.iniBool('Off'), false);

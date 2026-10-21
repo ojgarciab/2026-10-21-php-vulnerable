@@ -9,6 +9,8 @@ sugeridos para mitigar las vulnerabilidades descritas en el aviso de INCIBE-CERT
 **Todo se ejecuta en el navegador, en JavaScript puro.** El `php.ini` no se envía a ningún
 servidor: la página se puede abrir incluso sin conexión una vez cargada.
 
+Web publicada: <https://ojgarciab.github.io/2026-10-21-php-vulnerable/>
+
 ## Propósito
 
 El aviso de INCIBE-CERT recoge dos vulnerabilidades de ejecución remota de código sin
@@ -90,29 +92,27 @@ producción** y reinicia todos los procesos después.
 
 ## Despliegue en GitHub Pages
 
-El sitio es completamente estático (`index.html`, `css/`, `js/`). Hay dos opciones:
-
-- **Flujo de trabajo incluido**: `.github/workflows/pages.yml` ejecuta las pruebas y publica el
-  contenido del repositorio con *GitHub Actions*. En *Settings → Pages* selecciona
-  *Source: GitHub Actions*.
-- **Desde la rama**: en *Settings → Pages* selecciona *Deploy from a branch* y la rama/raíz.
-  El fichero `.nojekyll` evita el procesado de Jekyll.
+El sitio es completamente estático y vive en la carpeta `docs/` (`index.html`, `css/`, `js/`).
+GitHub Pages está configurado en *Settings → Pages* con *Deploy from a branch* y la carpeta
+`/docs`, de modo que cada *push* a la rama publicada actualiza la web. El fichero
+`docs/.nojekyll` evita el procesado de Jekyll. Las pruebas se ejecutan en cada *push* mediante
+`.github/workflows/test.yml`.
 
 Para probar en local basta con un servidor estático, por ejemplo:
 
 ```bash
-python3 -m http.server 8080   # o: npm start
+python3 -m http.server 8080 --directory docs   # o: npm start
 ```
 
 ## Estructura y pruebas
 
 ```
-index.html          Interfaz
-css/style.css       Estilos (modo claro/oscuro, adaptable a móvil)
-js/analyzer.js      Parser de php.ini, reglas y generador del fichero anotado (sin dependencias)
-js/app.js           Lógica de la interfaz (carga, tabla de resultados, descarga)
-js/sample.js        Extracto de php.ini-production para pruebas
-test/analyzer.test.js  Pruebas con el módulo `node:assert`
+docs/index.html          Interfaz (raíz publicada por GitHub Pages)
+docs/css/style.css       Estilos (modo claro/oscuro, adaptable a móvil)
+docs/js/analyzer.js      Parser de php.ini, reglas y generador del fichero anotado (sin dependencias)
+docs/js/app.js           Lógica de la interfaz (carga, tabla de resultados, descarga)
+docs/js/sample.js        Extracto de php.ini-production para pruebas
+test/analyzer.test.js    Pruebas con el módulo `node:assert`
 ```
 
 ```bash
