@@ -1,0 +1,11 @@
+{
+  "name": "php2shell-ini-analyzer",
+  "version": "1.0.0",
+  "description": "Analizador client-side de php.ini para las mitigaciones de CVE-2026-109618 / CVE-2026-109619 (PHP2Shell)",
+  "private": true,
+  "scripts": {
+    "test": "node test/analyzer.test.js",
+    "start": "python3 -m http.server 8080"
+  },
+  "license": "GPL-3.0"
+}
