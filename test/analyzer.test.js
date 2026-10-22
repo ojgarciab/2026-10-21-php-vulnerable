@@ -1,8 +1,8 @@
 // Pruebas mínimas del analizador: node test/analyzer.test.js
 const assert = require('node:assert/strict');
 const A = require('../docs/js/analyzer.js');
-A.registerLocale('es', require('../docs/js/locale-es.js'));
-A.registerLocale('en', require('../docs/js/locale-en.js'));
+const LOCALES = ['es', 'en', 'fr', 'it', 'de', 'pt'];
+for (const c of LOCALES) A.registerLocale(c, require('../docs/js/locale-' + c + '.js'));
 
 // Valores INI
 assert.equal(A.iniBool('Off'), false);
@@ -82,9 +82,18 @@ assert.ok(en.output.includes('SUGGESTED CHANGE [CRITICAL]'));
 assert.ok(!en.output.includes('CAMBIO SUGERIDO'));
 assert.equal(en.result.findings.find((f) => f.key === 'memory_limit').detail, 'Current limit: 256M (256M).');
 // Todas las claves de texto existen en ambos idiomas
-for (const code of ['es', 'en']) {
+for (const code of LOCALES) {
   const L = A.getLocale(code);
   for (const r of A.RULES) assert.ok(L.rules[r.key] && L.rules[r.key].why && L.rules[r.key].caveat && L.rules[r.key].details, code + ': ' + r.key);
   for (const id of Object.keys(A.CVES)) assert.ok(L.cves[id] && L.cves[id].title, code + ': ' + id);
+  // Mismas claves que el español en todos los niveles
+  const ref = A.getLocale('es');
+  const keys = (o, p) => Object.keys(o).flatMap((k) => (o[k] && typeof o[k] === 'object' && !Array.isArray(o[k]) ? keys(o[k], p + k + '.') : [p + k]));
+  assert.deepEqual(keys(L, '').sort(), keys(ref, '').sort(), code + ': claves distintas al español');
+  // Anotación completa sin errores y con el php.ini resultante válido
+  const o = A.annotate(ini, { version: '8.5', locale: code, date: '2026-10-21' }).output;
+  const last = [...A.parse(o).entries].reverse().find((e) => e.type === 'directive' && e.key === 'memory_limit' && !/^HOST=/i.test(e.section || ''));
+  assert.equal(last.value, '-1', code);
 }
+console.log('OK: ' + LOCALES.length + ' idiomas');
 console.log('OK: locales es/en');

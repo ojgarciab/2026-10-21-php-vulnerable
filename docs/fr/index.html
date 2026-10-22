@@ -1,0 +1,109 @@
+<!doctype html>
+<!-- Generado por tools/build-pages.py: edita la plantilla y vuelve a ejecutarlo. -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analyseur php.ini · PHP2Shell</title>
+  <meta name="description" content="Analysez un php.ini dans votre navigateur et téléchargez une version annotée avec les mesures d'atténuation de CVE-2026-109618 et CVE-2026-109619 (PHP2Shell) pendant la mise à jour de PHP.">
+  <link rel="alternate" hreflang="es" href="../es/">
+  <link rel="alternate" hreflang="en" href="../en/">
+  <link rel="alternate" hreflang="fr" href="../fr/">
+  <link rel="alternate" hreflang="it" href="../it/">
+  <link rel="alternate" hreflang="de" href="../de/">
+  <link rel="alternate" hreflang="pt" href="../pt/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%234f46e5%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22%3Eini%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <nav class="lang" aria-label="Langue">
+        <a href="../es/" hreflang="es" lang="es">Español</a> · <a href="../en/" hreflang="en" lang="en">English</a> · <span aria-current="page">Français</span> · <a href="../it/" hreflang="it" lang="it">Italiano</a> · <a href="../de/" hreflang="de" lang="de">Deutsch</a> · <a href="../pt/" hreflang="pt" lang="pt">Português</a>
+      </nav>
+      <p class="eyebrow">INCIBE-CERT · avis du 21/10/2026 · gravité critique</p>
+      <h1>Analyseur de <code>php.ini</code> contre PHP2Shell</h1>
+      <p class="lead">Chargez votre <code>php.ini</code> et obtenez une copie annotée avec les modifications suggérées pour atténuer <strong>CVE-2026-109618</strong> et <strong>CVE-2026-109619</strong> pendant la mise à jour de PHP. Tout est traité dans votre navigateur : le fichier ne quitte jamais votre ordinateur.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="input-card">
+      <h2>1. Chargez le fichier</h2>
+      <div class="grid-2">
+        <div>
+          <label class="dropzone" id="dropzone" for="file-input" tabindex="0">
+            <input type="file" id="file-input" accept=".ini,text/plain,*/*" hidden>
+            <span class="drop-icon" aria-hidden="true">⇪</span>
+            <span><strong>Déposez votre php.ini ici</strong> ou cliquez pour le sélectionner</span>
+            <span class="muted" id="file-name">Aucun fichier sélectionné</span>
+          </label>
+          <div class="row">
+            <button type="button" class="btn secondary" id="btn-sample">Charger l'exemple (php.ini-production)</button>
+            <button type="button" class="btn secondary" id="btn-clear">Effacer</button>
+          </div>
+        </div>
+        <div>
+          <label for="version">Version de PHP sur le serveur</label>
+          <select id="version">
+            <option value="unknown">Je ne sais pas / ne pas indiquer</option>
+            <option value="8.5">8.5 (corrigée dans 8.5.12)</option>
+            <option value="8.4">8.4 (corrigée dans 8.4.27)</option>
+            <option value="8.3">8.3 (corrigée dans 8.3.36)</option>
+            <option value="8.2">8.2 (corrigée dans 8.2.35)</option>
+            <option value="8.1">8.1 (fin de vie : correctifs de distribution uniquement)</option>
+            <option value="8.0">8.0 (fin de vie : correctifs de distribution uniquement)</option>
+            <option value="7.4">7.4 (fin de vie : correctifs de distribution uniquement)</option>
+            <option value="old">7.3 ou antérieure (aucun correctif)</option>
+          </select>
+          <p class="help">Obtenez-la avec <code>php -v</code>. Elle permet d'adapter les recommandations (par ex. <code>fatal_error_backtraces</code> n'existe qu'en 8.5).</p>
+          <label for="ini-text">Ou collez directement le contenu</label>
+          <textarea id="ini-text" rows="10" spellcheck="false" placeholder="; contenu de php.ini"></textarea>
+          <div class="row">
+            <button type="button" class="btn primary" id="btn-analyze">Analyser</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hidden" id="result-card">
+      <h2>2. Résultat de l'analyse</h2>
+      <div id="version-banner" class="banner"></div>
+      <div class="summary" id="summary"></div>
+      <table class="findings" id="findings">
+        <thead>
+          <tr>
+            <th>État</th>
+            <th>Directive</th>
+            <th>Ligne</th>
+            <th>Valeur actuelle</th>
+            <th>Suggérée</th>
+            <th>CVE</th>
+            <th>Gravité</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row">
+        <button type="button" class="btn primary" id="btn-download">Télécharger le php.ini annoté</button>
+        <button type="button" class="btn secondary" id="btn-copy">Copier dans le presse-papiers</button>
+        <button type="button" class="btn secondary" id="btn-toggle-preview">Afficher / masquer l'aperçu</button>
+      </div>
+      <pre class="preview hidden" id="preview"></pre>
+    </section>
+
+    <section class="card" id="about-card">
+      <h2>Que vérifie cet outil ?</h2>
+      <div id="rules-doc"></div>
+      <p class="muted">Sources : avis INCIBE-CERT, avis de sécurité PHP (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp), PHP Foundation, Red Hat, Cloudflare, Wiz, watchTowr, Sansec, Qualys. Consultez le <a href="https://github.com/ojgarciab/2026-10-21-php-vulnerable#readme">README</a> du projet.</p>
+    </section>
+  </main>
+
+  <footer class="wrap muted">Outil d'aide, fourni sans garantie. Les mesures d'atténuation de <code>php.ini</code> sont partielles : la seule correction complète est de mettre à jour PHP et de redémarrer tous les processus.</footer>
+
+  <script src="../js/analyzer.js"></script>
+  <script src="../js/locale-fr.js"></script>
+  <script src="../js/sample.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "test": "node test/analyzer.test.js",
+    "build": "python3 tools/build-pages.py",
     "start": "python3 -m http.server 8080 --directory docs"
   },
   "license": "GPL-3.0"

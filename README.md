@@ -9,9 +9,13 @@ sugeridos para mitigar las vulnerabilidades descritas en el aviso de INCIBE-CERT
 **Todo se ejecuta en el navegador, en JavaScript puro.** El `php.ini` no se envía a ningún
 servidor: la página se puede abrir incluso sin conexión una vez cargada.
 
-Web publicada: <https://ojgarciab.github.io/2026-10-21-php-vulnerable/> (disponible en
-[español](https://ojgarciab.github.io/2026-10-21-php-vulnerable/es/) e
-[inglés](https://ojgarciab.github.io/2026-10-21-php-vulnerable/en/)).
+Web publicada: <https://ojgarciab.github.io/2026-10-21-php-vulnerable/>, disponible en
+[español](https://ojgarciab.github.io/2026-10-21-php-vulnerable/es/),
+[inglés](https://ojgarciab.github.io/2026-10-21-php-vulnerable/en/),
+[francés](https://ojgarciab.github.io/2026-10-21-php-vulnerable/fr/),
+[italiano](https://ojgarciab.github.io/2026-10-21-php-vulnerable/it/),
+[alemán](https://ojgarciab.github.io/2026-10-21-php-vulnerable/de/) y
+[portugués](https://ojgarciab.github.io/2026-10-21-php-vulnerable/pt/).
 
 ## Propósito
 
@@ -95,9 +99,10 @@ producción** y reinicia todos los procesos después.
 ## Despliegue en GitHub Pages
 
 El sitio es completamente estático y vive en la carpeta `docs/`. Hay una página HTML por idioma
-(`docs/es/index.html`, `docs/en/index.html`) que comparten la hoja de estilos y el JavaScript de
+(`docs/es/`, `docs/en/`, `docs/fr/`, `docs/it/`, `docs/de/` y `docs/pt/`), generadas todas desde una
+plantilla única por `tools/build-pages.py`, y comparten la hoja de estilos y el JavaScript de
 `docs/css` y `docs/js`. La raíz `docs/index.html` redirige al idioma guardado en el navegador o,
-si no lo hay, al del propio navegador (español por defecto); cada página enlaza a la otra con un
+si no lo hay, al del propio navegador (español por defecto); cada página enlaza a las demás con un
 selector de idioma y etiquetas `hreflang`.
 GitHub Pages está configurado en *Settings → Pages* con *Deploy from a branch* y la carpeta
 `/docs`, de modo que cada *push* a la rama publicada actualiza la web. El fichero
@@ -114,12 +119,11 @@ python3 -m http.server 8080 --directory docs   # o: npm start
 
 ```
 docs/index.html          Redirección al idioma del usuario
-docs/es/index.html       Interfaz en español
-docs/en/index.html       Interfaz en inglés
+docs/<idioma>/index.html Interfaz en cada idioma (es, en, fr, it, de, pt), generada por tools/build-pages.py
 docs/css/style.css       Estilos comunes (modo claro/oscuro, adaptable a móvil)
 docs/js/analyzer.js      Parser de php.ini, reglas y generador del fichero anotado (sin dependencias)
-docs/js/locale-es.js     Textos en español (interfaz, explicaciones y comentarios del fichero generado)
-docs/js/locale-en.js     Textos en inglés
+docs/js/locale-<idioma>.js Textos de cada idioma (interfaz, explicaciones y comentarios del fichero generado)
+tools/build-pages.py     Plantilla HTML y textos estáticos de cada idioma; regenera docs/<idioma>/index.html
 docs/js/app.js           Lógica de la interfaz común (carga, tabla de resultados, descarga)
 docs/js/sample.js        Extracto de php.ini-production para pruebas
 test/analyzer.test.js    Pruebas con el módulo `node:assert`
@@ -131,9 +135,10 @@ node test/analyzer.test.js   # o: npm test
 
 Para añadir o ajustar una comprobación basta con editar la lista `RULES` de `docs/js/analyzer.js`
 (directiva, valor sugerido, severidad, CVE y una función `check()` que devuelve `ok`, `change`,
-`add`, `info` o `skip`) y añadir sus textos en cada `docs/js/locale-*.js`. Para añadir un idioma:
-copiar `docs/js/locale-es.js` y `docs/es/index.html` con el nuevo código, enlazarlo desde el selector
-de las demás páginas y añadirlo a la lista `supported` de `docs/index.html`.
+`add`, `info` o `skip`) y añadir sus textos en cada `docs/js/locale-*.js` (las pruebas comprueban que
+todos los idiomas tienen las mismas claves). Para añadir un idioma: copiar `docs/js/locale-es.js` con el
+nuevo código, añadir su entrada en `LANGS` de `tools/build-pages.py`, ejecutar el script (regenera todas
+las páginas con el selector actualizado) y añadir el código a la lista `supported` de `docs/index.html`.
 
 ## Fuentes
 

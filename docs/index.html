@@ -6,10 +6,14 @@
   <title>Analizador php.ini · PHP2Shell</title>
   <link rel="alternate" hreflang="es" href="es/">
   <link rel="alternate" hreflang="en" href="en/">
+  <link rel="alternate" hreflang="fr" href="fr/">
+  <link rel="alternate" hreflang="it" href="it/">
+  <link rel="alternate" hreflang="de" href="de/">
+  <link rel="alternate" hreflang="pt" href="pt/">
   <link rel="alternate" hreflang="x-default" href="es/">
   <script>
     (function () {
-      var supported = ['es', 'en'];
+      var supported = ['es', 'en', 'fr', 'it', 'de', 'pt'];
       var lang = null;
       try { lang = localStorage.getItem('php2shell-lang'); } catch (e) { /* sin almacenamiento */ }
       if (supported.indexOf(lang) < 0) {
@@ -23,6 +27,6 @@
   <noscript><meta http-equiv="refresh" content="0; url=es/"></noscript>
 </head>
 <body>
-  <p>Selecciona idioma / Choose a language: <a href="es/">Español</a> · <a href="en/">English</a></p>
+  <p><a href="es/" hreflang="es" lang="es">Español</a> · <a href="en/" hreflang="en" lang="en">English</a> · <a href="fr/" hreflang="fr" lang="fr">Français</a> · <a href="it/" hreflang="it" lang="it">Italiano</a> · <a href="de/" hreflang="de" lang="de">Deutsch</a> · <a href="pt/" hreflang="pt" lang="pt">Português</a></p>
 </body>
 </html>

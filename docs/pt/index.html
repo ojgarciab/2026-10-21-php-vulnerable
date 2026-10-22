@@ -1,0 +1,109 @@
+<!doctype html>
+<!-- Generado por tools/build-pages.py: edita la plantilla y vuelve a ejecutarlo. -->
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analisador php.ini · PHP2Shell</title>
+  <meta name="description" content="Analise um php.ini no seu navegador e descarregue uma versão anotada com as mitigações para CVE-2026-109618 e CVE-2026-109619 (PHP2Shell) enquanto atualiza o PHP.">
+  <link rel="alternate" hreflang="es" href="../es/">
+  <link rel="alternate" hreflang="en" href="../en/">
+  <link rel="alternate" hreflang="fr" href="../fr/">
+  <link rel="alternate" hreflang="it" href="../it/">
+  <link rel="alternate" hreflang="de" href="../de/">
+  <link rel="alternate" hreflang="pt" href="../pt/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%234f46e5%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22%3Eini%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <nav class="lang" aria-label="Idioma">
+        <a href="../es/" hreflang="es" lang="es">Español</a> · <a href="../en/" hreflang="en" lang="en">English</a> · <a href="../fr/" hreflang="fr" lang="fr">Français</a> · <a href="../it/" hreflang="it" lang="it">Italiano</a> · <a href="../de/" hreflang="de" lang="de">Deutsch</a> · <span aria-current="page">Português</span>
+      </nav>
+      <p class="eyebrow">INCIBE-CERT · aviso de 21/10/2026 · gravidade crítica</p>
+      <h1>Analisador de <code>php.ini</code> contra o PHP2Shell</h1>
+      <p class="lead">Carregue o seu <code>php.ini</code> e obtenha uma cópia anotada com as alterações sugeridas para mitigar <strong>CVE-2026-109618</strong> e <strong>CVE-2026-109619</strong> enquanto atualiza o PHP. Tudo é processado no seu navegador: o ficheiro nunca sai do seu computador.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="input-card">
+      <h2>1. Carregue o ficheiro</h2>
+      <div class="grid-2">
+        <div>
+          <label class="dropzone" id="dropzone" for="file-input" tabindex="0">
+            <input type="file" id="file-input" accept=".ini,text/plain,*/*" hidden>
+            <span class="drop-icon" aria-hidden="true">⇪</span>
+            <span><strong>Arraste aqui o seu php.ini</strong> ou clique para o selecionar</span>
+            <span class="muted" id="file-name">Nenhum ficheiro selecionado</span>
+          </label>
+          <div class="row">
+            <button type="button" class="btn secondary" id="btn-sample">Carregar exemplo (php.ini-production)</button>
+            <button type="button" class="btn secondary" id="btn-clear">Limpar</button>
+          </div>
+        </div>
+        <div>
+          <label for="version">Versão do PHP no servidor</label>
+          <select id="version">
+            <option value="unknown">Não sei / não indicar</option>
+            <option value="8.5">8.5 (corrigida em 8.5.12)</option>
+            <option value="8.4">8.4 (corrigida em 8.4.27)</option>
+            <option value="8.3">8.3 (corrigida em 8.3.36)</option>
+            <option value="8.2">8.2 (corrigida em 8.2.35)</option>
+            <option value="8.1">8.1 (sem suporte: apenas patches da distribuição)</option>
+            <option value="8.0">8.0 (sem suporte: apenas patches da distribuição)</option>
+            <option value="7.4">7.4 (sem suporte: apenas patches da distribuição)</option>
+            <option value="old">7.3 ou anterior (sem patch)</option>
+          </select>
+          <p class="help">Pode obtê-la com <code>php -v</code>. Serve para adaptar as recomendações (p. ex. <code>fatal_error_backtraces</code> só existe na 8.5).</p>
+          <label for="ini-text">Ou cole o conteúdo diretamente</label>
+          <textarea id="ini-text" rows="10" spellcheck="false" placeholder="; conteúdo do php.ini"></textarea>
+          <div class="row">
+            <button type="button" class="btn primary" id="btn-analyze">Analisar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hidden" id="result-card">
+      <h2>2. Resultado da análise</h2>
+      <div id="version-banner" class="banner"></div>
+      <div class="summary" id="summary"></div>
+      <table class="findings" id="findings">
+        <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Diretiva</th>
+            <th>Linha</th>
+            <th>Valor atual</th>
+            <th>Sugerido</th>
+            <th>CVE</th>
+            <th>Gravidade</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row">
+        <button type="button" class="btn primary" id="btn-download">Descarregar php.ini anotado</button>
+        <button type="button" class="btn secondary" id="btn-copy">Copiar para a área de transferência</button>
+        <button type="button" class="btn secondary" id="btn-toggle-preview">Mostrar / ocultar pré-visualização</button>
+      </div>
+      <pre class="preview hidden" id="preview"></pre>
+    </section>
+
+    <section class="card" id="about-card">
+      <h2>O que verifica esta ferramenta?</h2>
+      <div id="rules-doc"></div>
+      <p class="muted">Fontes: aviso do INCIBE-CERT, avisos de segurança do PHP (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp), PHP Foundation, Red Hat, Cloudflare, Wiz, watchTowr, Sansec, Qualys. Consulte o <a href="https://github.com/ojgarciab/2026-10-21-php-vulnerable#readme">README</a> do projeto.</p>
+    </section>
+  </main>
+
+  <footer class="wrap muted">Ferramenta de apoio, sem garantias. As mitigações do <code>php.ini</code> são parciais: a única correção completa é atualizar o PHP e reiniciar todos os processos.</footer>
+
+  <script src="../js/analyzer.js"></script>
+  <script src="../js/locale-pt.js"></script>
+  <script src="../js/sample.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
